@@ -68,15 +68,14 @@ class UploadAll extends Component {
         const dataAsyncSave = await AsyncStorage.getItem('@SaveDataMeter')
         const dataAsyncTower = await AsyncStorage.getItem('@DataTower')
         const name = await AsyncStorage.getItem('@Name')
-
         if(dataAsyncSave){
             const dataAlls = JSON.parse(dataAll)
             const dataMeters = JSON.parse(dataAsyncSave)
             const dataTowers = JSON.parse(dataAsyncTower)
 
-            const dataSaves = dataMeters.filter(item => item.entity == dataTowers[1].entity_cd && item.project.trim() == dataTowers[1].project_no && item.meterType == this.state.selType);
+            const dataSaves = dataMeters.filter(item => item.entity.trim() == dataTowers[0].entity_cd && item.project.trim() == dataTowers[0].project_no && item.meterType == this.state.selType);
 
-            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType )
+            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType  && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
             const dataCounts = {
                 total : dataAl.length,
                 reading : dataSaves.length,
@@ -89,7 +88,7 @@ class UploadAll extends Component {
                 dataMeterAll : dataMeters,
                 dataMeter : dataMeters,
                 dataSave : dataSaves,
-                selTower : dataTowers[1],
+                selTower : dataTowers[0],
                 dataCount : dataCounts,
                 name : name
             }
@@ -98,7 +97,7 @@ class UploadAll extends Component {
         } else {
             const dataAlls = JSON.parse(dataAll)
             const dataTowers = JSON.parse(dataAsyncTower)
-            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType )
+            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
 
             const dataCounts = {
                 total : dataAl.length,
@@ -109,7 +108,7 @@ class UploadAll extends Component {
             const data = {
                 dataAll : dataAlls,
                 dataTower : dataTowers,
-                selTower : dataTowers[1],
+                selTower : dataTowers[0],
                 dataCount : dataCounts,    
             }
             this.setState(data)
@@ -139,7 +138,7 @@ class UploadAll extends Component {
         
         const formData = {
             cons  : tw.db_profile,
-            entity : dm.entity_cd,
+            entity : dm.entity_cd.trim(),
             project : dm.project_no.trim(),
             type : data.meterType,
             meterId : data.meterId,
@@ -180,7 +179,7 @@ class UploadAll extends Component {
 
         const datas = {
             cons : tw.db_profile,
-            entity : dm.entity_cd,
+            entity : dm.entity_cd.trim(),
             project : dm.project_no.trim(),
             meterType : data.meterType,
             meterId : data.meterId,
@@ -247,9 +246,9 @@ class UploadAll extends Component {
         const sel = ref.selTower
         const dataMeter = this.state.dataMeterAll
 
-        const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd == sel.entity_cd && item.project_no.trim() == sel.project_no)
-        const dataMeters = dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no);
-        const dataSaves = dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
+        const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
+        const dataMeters = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no);
+        const dataSaves = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
 
         const dataCounts = {
             total : dataAll.length,
@@ -273,8 +272,8 @@ class UploadAll extends Component {
         const ts = this.state
         
 
-        const dataAlls = ts.dataAll.filter(item => item.meter_type == tab && item.entity_cd == sel.entity_cd && item.project_no.trim() == sel.project_no)
-        const dataSaves = this.state.dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
+        const dataAlls = ts.dataAll.filter(item => item.meter_type == tab && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
+        const dataSaves = this.state.dataMeter.filter(item => item.entity.trim == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
 
         const dataCounts = {
             total : dataAlls.length,

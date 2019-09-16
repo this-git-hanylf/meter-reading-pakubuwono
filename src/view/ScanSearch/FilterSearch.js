@@ -39,10 +39,10 @@ class FilterSearch extends Component {
                 
                 <Text style={[Style.textBlack,styles.text]}>Meter ID</Text>
                 <View style={styles.readForm}>
-                    <TextInputs width='67%' height="8%" placeholder="Input Meter ID" value={this.state.txtSearch} onChangeText={(val)=>this.setState({txtSearch:val})} />
-                    <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
+                    <TextInputs width='83%' height="8%" placeholder="Input Meter ID" value={this.state.txtSearch} onChangeText={(val)=>this.setState({txtSearch:val})} />
+                    {/* <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
                         <Icon name="qrcode" size={25} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={()=>this.search()}>

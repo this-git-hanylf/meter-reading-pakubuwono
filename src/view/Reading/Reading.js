@@ -59,24 +59,16 @@ class Reading extends Component {
     Actions.readingScan();
     this.setState({click:true})
   }
+  
   clickReadingForm() {
-    if(this.state.dataqr.length < 8 ){
-      alert('Fill meter id corecly !')
+    if(this.state.dataqr.length < 5 ){
+      alert('Fill Meter-Id corectly !')
     } else {
       Actions.readingForm({meterId : this.state.dataqr.toUpperCase()});
       this.setState({click:true})
     }
   }
-  clickReadCode() {
-    Actions.readCode();
-    this.setState({click:true})
-  }
-  onSuccess(e) { 
-    this.setState({
-      dataqr: this.state.dataqr + ", " + e.data,
-      status: "Coba Lagi"
-    });
-  }
+  
   setModalVisible(visible) {
       this.setState({ modalVisible: visible});
   }
@@ -123,10 +115,10 @@ class Reading extends Component {
 
         <Text style={[Style.textGreyDark,styles.text]}>Meter ID</Text>
         <View style={styles.readForm}>
-          <TextInputs width='67%' height="8%" placeholder="Input Meter ID" value={this.state.dataqr} onChangeText={(val)=>this.setState({dataqr:val})} />
-          <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
+          <TextInputs width='85%' height="8%" placeholder="Input Meter ID" value={this.state.dataqr} onChangeText={(val)=>this.setState({dataqr:val})} />
+          {/* <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
             <Icon name="qrcode" size={25} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         
         <TouchableOpacity style={styles.button} onPress={()=>this.clickReadingForm()} >

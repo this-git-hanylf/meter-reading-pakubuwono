@@ -56,7 +56,7 @@ class Download extends Component {
             if(res.Error === false){
                 let resData = res.Data
                 console.log('resData',resData);
-                this.setState({dataTower:resData,tower:resData[0].project_no})
+                this.setState({dataTower:resData,tower:resData[0]})
             }
         }).catch((error) => {
             console.log(error);
@@ -64,7 +64,7 @@ class Download extends Component {
     }
 
     download = async() =>{
-        const data = this.state.dataTower.filter(item => item.project_no == this.state.tower);
+        const data = this.state.dataTower.filter(item => item.project_no == this.state.tower.project_no);
         this.setState({isProgress:!this.state.isProgress});
 
         let project_no = data[0].project_no
@@ -75,11 +75,8 @@ class Download extends Component {
         })
         .then((response) => response.json())
         .then((res)=>{
-            console.log('data meter',res)
             if(!res.Error){
-                this._storeData('@DataMeter',JSON.stringify(res.Data)) 
-                this._storeData('@DataTower',JSON.stringify(this.state.dataTower)) 
-                alert("Download Successful");
+                this.pushToStorage(res.Data)                
             } else {
                 alert(res.Pesan);
             }
@@ -91,11 +88,38 @@ class Download extends Component {
         });
     }
 
+    pushToStorage = async (data) =>{
+        const { entity_cd, project_no } = this.state.tower
+
+        const dataMeter = await this._getData('@DataMeter');
+        const deleteDuplicateData = dataMeter.filter(item => item.project_no.trim() !== project_no && item.entity_cd.trim() !== project_no);
+        const newData = [...deleteDuplicateData, ...data];
+        this._storeData('@DataMeter',JSON.stringify(newData));
+        this._storeData('@DataTower',JSON.stringify(this.state.dataTower));
+        alert("Download Successful");
+    }
+
     _storeData = async (name,data) =>{
         try {
             await AsyncStorage.setItem(name,data)
         } catch (error) {
             console.log('ErrorStoreData', error)
+        }
+    }
+
+    _getData = async (name) => {
+        try {
+            const value = await AsyncStorage.getItem(name)
+            let item = '';
+            try {
+                item = JSON.parse(value);
+            } catch (error) {
+                item = value;
+            }
+            return item
+            
+        } catch(error) {
+            console.log('ErrorGetData', error)
         }
     }
 
@@ -116,7 +140,7 @@ class Download extends Component {
 
     loadOffice() {
         return this.state.dataTower.map((data,key) => (
-          <Picker.Item key={key} label={data.project_descs} value={data.project_no} />
+          <Picker.Item key={key} label={data.project_descs} value={data} />
         ));
     }
 

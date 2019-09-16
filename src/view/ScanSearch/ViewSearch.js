@@ -44,12 +44,15 @@ class ViewSearch extends Component {
     }
 
     getData = async(data)=>{
-        const dataAsync = await AsyncStorage.getItem('@SaveDataMeter')
+        const dataAsync = await AsyncStorage.getItem('@SaveDataMeter');
         if(dataAsync){
             let dataJson = JSON.parse(dataAsync)
+
             const resultQuery = Query(dataJson, data => data.meterId)
+
             const result = resultQuery.get(data);
             console.log('result',result);
+
             if(result){
                 const x = result[0]
             
@@ -74,16 +77,6 @@ class ViewSearch extends Component {
             <View style={styles.container}>
                 {
                     data ? 
-                    // <View style={styles.list} >
-                    //     <View style={{flexDirection : 'row',justifyContent:'space-between'}}>
-                    //         <Text>{data.meterId}</Text>
-                    //         <Text>{data.unitNo}</Text>
-                    //     </View>
-                    //     <View style={{flexDirection : 'row',justifyContent:'space-between'}}>
-                    //         <Text>{data.cpName}</Text>
-                    //         <Text>{data.csName}</Text>
-                    //     </View>
-                    // </View>
                     <View style={Styles.listView}>
                 
                         <View style={Styles.view}>

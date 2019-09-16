@@ -68,15 +68,15 @@ class SummaryView extends Component {
         const dataAsyncSave = await AsyncStorage.getItem('@SaveDataMeter')
         const dataAsyncTower = await AsyncStorage.getItem('@DataTower')
         const name = await AsyncStorage.getItem('@Name')
-
+        console.log('dataAsyncSave',dataAsyncSave);
         if(dataAsyncSave){
             const dataAlls = JSON.parse(dataAll)
             const dataMeters = JSON.parse(dataAsyncSave)
             const dataTowers = JSON.parse(dataAsyncTower)
 
-            const dataSaves = dataMeters.filter(item => item.entity == dataTowers[1].entity_cd && item.project.trim() == dataTowers[1].project_no && item.meterType == this.state.selType);
+            const dataSaves = dataMeters.filter(item => item.entity == dataTowers[0].entity_cd && item.project.trim() == dataTowers[0].project_no && item.meterType == this.state.selType);
 
-            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType )
+            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
             const dataCounts = {
                 total : dataAl.length,
                 reading : dataSaves.length,
@@ -89,7 +89,7 @@ class SummaryView extends Component {
                 dataMeter : dataMeters,
                 dataSave : dataSaves,
                 dataTower : dataTowers,
-                selTower : dataTowers[1],
+                selTower : dataTowers[0],
                 dataCount : dataCounts,
                 name : name
             }
@@ -98,7 +98,7 @@ class SummaryView extends Component {
         }else {
             const dataAlls = JSON.parse(dataAll)
             const dataTowers = JSON.parse(dataAsyncTower)
-            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType )
+            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
 
             const dataCounts = {
                 total : dataAl.length,
@@ -109,10 +109,11 @@ class SummaryView extends Component {
             const data = {
                 dataAll : dataAlls,
                 dataTower : dataTowers,
-                selTower : dataTowers[1],
+                selTower : dataTowers[0],
                 dataCount : dataCounts,    
             }
             this.setState(data)
+            console.log('dataAsyncSave',data);
         }
     }
     
@@ -246,8 +247,10 @@ class SummaryView extends Component {
     handleChangePicker = (ref) =>{
         const sel = ref.selTower
         const dataMeter = this.state.dataMeterAll
+        console.log('dataAll',this.state.dataAll);
+        console.log('datasel',sel);
 
-        const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd == sel.entity_cd && item.project_no.trim() == sel.project_no)
+        const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
         const dataMeters = dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no);
         const dataSaves = this.state.dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
 
@@ -265,7 +268,6 @@ class SummaryView extends Component {
         }
 
         this.setState(data)
-        console.log('data',dataCounts);
     }
 
     handleChangeTab = (tab) =>{
@@ -273,8 +275,8 @@ class SummaryView extends Component {
         const ts = this.state
         
 
-        const dataAlls = ts.dataAll.filter(item => item.meter_type == tab && item.entity_cd == sel.entity_cd && item.project_no.trim() == sel.project_no)
-        const dataSaves = this.state.dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
+        const dataAlls = ts.dataAll.filter(item => item.meter_type == tab && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
+        const dataSaves = this.state.dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
 
         const dataCounts = {
             total : dataAlls.length,
