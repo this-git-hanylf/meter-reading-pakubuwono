@@ -116,8 +116,6 @@ class ReadingForm extends Component {
   }
 
   clickSave = () => {
-    this.setState({ isloading: true, loadingText: "Saving Meteran" });
-    Alert.show('Data saved sucessfuly','pop')
     
     const x = this.state;
     const data = {
@@ -133,11 +131,18 @@ class ReadingForm extends Component {
       readingDate: new Date(),
       dataPict: x.dataPict
     };
-    console.log('data',data);
-    this.saveData(data);
+    console.log('data',parseFloat(x.lastRead) + "|" + parseFloat(x.meteran));
+    if(parseFloat(x.lastRead) <= (parseFloat(x.meteran))){
+      this.saveData(data);
+    } else {
+      Alert.show("Meteran doesn't allow low than last read","cl");
+    }
   };
 
   saveData = async data => {
+
+    this.setState({ isloading: true, loadingText: "Saving Meteran" });
+    Alert.show('Data saved sucessfuly','pop')
     console.log(data);
     const dataAsync = await AsyncStorage.getItem("@SaveDataMeter");
     if (dataAsync !== null) {
@@ -186,6 +191,13 @@ class ReadingForm extends Component {
 
   render() {
     let data = this.state;
+    console.log('data',);
+
+    const satuan = {
+      W : "m2",
+      E : "Kwh",
+      G : "gas"
+    }
 
     return (
       <ScrollView>
@@ -196,14 +208,15 @@ class ReadingForm extends Component {
             date={this.state.readingDate}
             format={'YYYY-MM-DD'}            
             onChange={(date)=>this.setState({readingDate:date})}
-            disable
           />
           
           <View style={styles.cardsumary}>     
             <Text style={[Style.textBlack,styles.text]}>Meter ID : {data.meterId}</Text>
             <Text style={[Style.textBlack,styles.text]}>Debtor : {data.cpName}</Text>
             <Text style={[Style.textBlack,styles.text]}>Lot No : {data.lotNo}</Text>
-            <Text style={[Style.textBlack,styles.text]}>Last Read : {data.lastRead}</Text>
+            <Text style={[Style.textBlack,styles.text]}>
+              Last Read : {parseFloat(data.lastRead)} {" "+satuan[data.meterType]}
+            </Text>
           </View>
           <Text style={[Style.textBlack,styles.text]}>Input Meteran</Text>
           <TextInputs

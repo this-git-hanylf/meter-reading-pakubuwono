@@ -115,10 +115,10 @@ class Reading extends Component {
 
         <Text style={[Style.textGreyDark,styles.text]}>Meter ID</Text>
         <View style={styles.readForm}>
-          <TextInputs width='85%' height="8%" placeholder="Input Meter ID" value={this.state.dataqr} onChangeText={(val)=>this.setState({dataqr:val})} />
-          {/* <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
+          <TextInputs width='65%' height="8%" placeholder="Input Meter ID" value={this.state.dataqr} onChangeText={(val)=>this.setState({dataqr:val})} />
+          <TouchableOpacity style={styles.btnScan} onPress={()=>this.clickReadingScan()} >
             <Icon name="qrcode" size={25} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
         
         <TouchableOpacity style={styles.button} onPress={()=>this.clickReadingForm()} >
