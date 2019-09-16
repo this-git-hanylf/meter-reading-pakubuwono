@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="45px" viewBox="0 0 27 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Screens" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="dash-meter-reading" transform="translate(-175.000000, -631.000000)" fill="#E3E3E3">
+            <g id="Group" transform="translate(175.000000, 631.000000)">
+                <path d="M26.72,7.4 C26.72,3.53400675 23.5859932,0.4 19.72,0.4 L7.72,0.4 C3.85400675,0.4 0.72,3.53400675 0.72,7.4 L0.72,37.4 C0.72,41.2659932 3.85400675,44.4 7.72,44.4 L19.72,44.4 C23.5859932,44.4 26.72,41.2659932 26.72,37.4 L26.72,7.4 Z M3.72,9.4 L23.72,9.4 L23.72,33.4 L3.72,33.4 L3.72,9.4 Z M7.72,3.4 L19.72,3.4 C21.539157,3.40590719 23.1252179,4.63859706 23.58,6.4 L3.86,6.4 C4.31478205,4.63859706 5.90084302,3.40590719 7.72,3.4 Z M19.72,41.4 L7.72,41.4 C5.510861,41.4 3.72,39.609139 3.72,37.4 L3.72,36.4 L23.72,36.4 L23.72,37.4 C23.72,39.609139 21.929139,41.4 19.72,41.4 Z" id="Shape"></path>
+                <circle id="Oval" cx="13.22" cy="38.9" r="1.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
