@@ -92,8 +92,13 @@ class Download extends Component {
         const { entity_cd, project_no } = this.state.tower
 
         const dataMeter = await this._getData('@DataMeter');
-        const deleteDuplicateData = dataMeter.filter(item => item.project_no.trim() !== project_no && item.entity_cd.trim() !== project_no);
-        const newData = [...deleteDuplicateData, ...data];
+        let newData = [];
+        if(dataMeter){
+            const deleteDuplicateData = dataMeter.filter(item => item.project_no.trim() !== project_no && item.entity_cd.trim() !== project_no);
+            newData = [...deleteDuplicateData, ...data];
+        } else {
+            newData = [...data];
+        }
         this._storeData('@DataMeter',JSON.stringify(newData));
         this._storeData('@DataTower',JSON.stringify(this.state.dataTower));
         alert("Download Successful");

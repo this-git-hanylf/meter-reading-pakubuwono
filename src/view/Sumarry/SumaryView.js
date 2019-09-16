@@ -74,7 +74,7 @@ class SummaryView extends Component {
             const dataMeters = JSON.parse(dataAsyncSave)
             const dataTowers = JSON.parse(dataAsyncTower)
 
-            const dataSaves = dataMeters.filter(item => item.entity == dataTowers[0].entity_cd && item.project.trim() == dataTowers[0].project_no && item.meterType == this.state.selType);
+            const dataSaves = dataMeters.filter(item => item.entity.trim() == dataTowers[0].entity_cd && item.project.trim() == dataTowers[0].project_no && item.meterType == this.state.selType);
 
             const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
             const dataCounts = {
@@ -140,7 +140,7 @@ class SummaryView extends Component {
         
         const formData = {
             cons  : tw.db_profile,
-            entity : dm.entity_cd,
+            entity : dm.entity_cd.trim(),
             project : dm.project_no.trim(),
             type : data.meterType,
             meterId : data.meterId,
@@ -181,7 +181,7 @@ class SummaryView extends Component {
 
         const datas = {
             cons : tw.db_profile,
-            entity : dm.entity_cd,
+            entity : dm.entity_cd.trim(),
             project : dm.project_no.trim(),
             meterType : data.meterType,
             meterId : data.meterId,
@@ -246,12 +246,10 @@ class SummaryView extends Component {
 
     handleChangePicker = (ref) =>{
         const sel = ref.selTower
-        const dataMeter = this.state.dataMeterAll
-        console.log('dataAll',this.state.dataAll);
-        console.log('datasel',sel);
+        const dataMeter = this.state.dataMeterAll;
 
         const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
-        const dataMeters = dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no);
+        const dataMeters = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
         const dataSaves = this.state.dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
 
         const dataCounts = {
@@ -262,7 +260,7 @@ class SummaryView extends Component {
 
         const data = {
             selTower : sel,
-            dataMeter : dataMeters,
+            // dataMeter : dataMeters,
             dataSave : dataSaves ? dataSaves : [],
             dataCount : dataCounts
         }
