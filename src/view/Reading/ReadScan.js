@@ -30,7 +30,7 @@ export default class ReadScan extends Component {
     //   [{ text: "OK", onPress: () => console.log("OK Pressed") }],
     //   { cancelable: false }
     // );
-    setTimeout(()=> {Actions.refresh({meterId: e.data})}, 500); Actions.pop();
+    setTimeout(()=> {Actions.refresh({type: "reading",meterId: e.data})}, 500); Actions.pop();
   }
   clickReading() {
     Actions.reading();

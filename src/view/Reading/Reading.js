@@ -12,23 +12,24 @@ import TextInputs from "../components/InputText/TextInput";
 import MAIN from '@Assets/styles/Theme';
 import Style from '../../theme/Style';
 
+const dataMeterType = [
+  { id: 1, name: "Electric", type:"E" },
+  { id: 2, name: "Water", type:"W" },
+  { id: 3, name: "Gas", type :"G" }
+]
 // create a component
 class Reading extends Component {
   _isMount = false;
   constructor(props) {
     super(props);
     this.state = {
-      dataMeterType: [
-        { id: 1, name: "Electric" },
-        { id: 2, name: "Water" },
-        { id: 3, name: "Air" }
-      ],
+      
       dataTower:[],
 
       dataqr: '',
       modalVisible: false,
 
-      selMeterType : '',
+      selMeterType : dataMeterType[0],
       selTower: '' 
 
     };
@@ -50,9 +51,17 @@ class Reading extends Component {
   }
 
   componentWillReceiveProps(props){
-    this.setState({dataqr : props.meterId},()=>{
-      Actions.readingForm({meterId : this.state.dataqr.toUpperCase()});
-    })
+    console.log('props',props);
+    // alert("oke")
+
+    if(props.type == "saving"){
+      this.setState({dataqr : "",});
+    } else if(props.type == "reading") {
+      this.setState({dataqr : props.meterId},()=>{
+        this.goToReadingForm()
+      })
+    }
+
   }
 
   clickReadingScan() {
@@ -61,12 +70,23 @@ class Reading extends Component {
   }
   
   clickReadingForm() {
-    if(this.state.dataqr.length < 5 ){
+    if(this.state.dataqr.length < 1 ){
       alert('Fill Meter-Id corectly !')
     } else {
-      Actions.readingForm({meterId : this.state.dataqr.toUpperCase()});
+      this.goToReadingForm()
       this.setState({click:true})
     }
+  }
+
+  goToReadingForm = () =>{
+    const {dataqr,selTower, selMeterType } = this.state
+    const dataPass = {
+      meterId : this.state.dataqr.toUpperCase(),
+      selTower,
+      selMeterType
+    };
+    // console.log('dataPass',dataPass);
+    Actions.readingForm(dataPass);
   }
   
   setModalVisible(visible) {
@@ -98,13 +118,12 @@ class Reading extends Component {
   }
 
   renderMeterType() {
-    return this.state.dataMeterType.map((offc,key) => (
+    return dataMeterType.map((offc,key) => (
       <Picker.Item key={key} label={offc.name} value={offc} />
     ));
   }
 
   render() {
-    console.log('value',this.state.selTower.project_descs);
     return (
       <View style={styles.container}>
         <Text style={[Style.textGreyDark,styles.text]}>Choose Tower</Text>

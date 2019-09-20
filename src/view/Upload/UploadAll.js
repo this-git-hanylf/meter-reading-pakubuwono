@@ -22,6 +22,7 @@ import RoundedView from '@Components/UI/RoundedView';
 import Icon from "react-native-vector-icons/Ionicons";
 import {background,fonts,colors} from '@Assets/styles/base';
 import MAIN from '@Assets/styles/Theme'
+import { Distinct } from "@Components/Function/Query";
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 const type = {
@@ -29,6 +30,7 @@ const type = {
     W : 'Water',
     G : 'Gas'
 }
+import CSpinner from '../components/Alert/CSpinner';
 
 class UploadAll extends Component {
 
@@ -55,7 +57,8 @@ class UploadAll extends Component {
             },
             name : '',
             selModal : false,
-            viewI : false
+            viewI : false,
+            isLoading : false
         }
     }
 
@@ -77,9 +80,9 @@ class UploadAll extends Component {
 
             const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType  && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
             const dataCounts = {
-                total : dataAl.length,
+                total : Distinct(dataAl,"meter_id").length,
                 reading : dataSaves.length,
-                unreading : dataAl.length - dataSaves.length
+                unreading : Distinct(dataAl,"meter_id").length - dataSaves.length
             }
 
             const data = {
@@ -100,9 +103,9 @@ class UploadAll extends Component {
             const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
 
             const dataCounts = {
-                total : dataAl.length,
+                total : Distinct(dataAl,"meter_id").length,
                 reading : 0,
-                unreading : dataAl.length
+                unreading : Distinct(dataAl,"meter_id").length
             }
 
             const data = {
@@ -135,7 +138,7 @@ class UploadAll extends Component {
     uploadData = (data) =>{
         const dm = data.dataMeter
         const tw = this.state.selTower
-        
+        this.setState({isLoading :true});
         const formData = {
             cons  : tw.db_profile,
             entity : dm.entity_cd.trim(),
@@ -145,10 +148,11 @@ class UploadAll extends Component {
             readDate : moment(data.readingDate).format('YYYYMMDD'),
             lot_no : dm.lot_no,
             curr_read : data.meteran,
-            curr_read_high : null
+            curr_read_high : null,
+            audit_user : this.state.name
         }
 
-        // console.log('formData',formData);
+        console.log('formData',formData);
         // this.delete(formData)
 
         fetch(urlApi+'c_meter_utility/saveDataMu',{
@@ -220,7 +224,10 @@ class UploadAll extends Component {
                     }
                 }
                 
-            })
+            }).catch((error) => {
+                console.log('Error =>>',error);
+            });
+
         })
        
     }
@@ -237,8 +244,11 @@ class UploadAll extends Component {
         }
         console.log('dataMeters',dataMeters);
         console.log('dataSaves',dataSaves);        
-        this.setState({dataMeter:dataMeters,dataSave : dataSaves,dataCount:dataCounts},()=>{
+        this.setState({dataMeter:dataMeters,dataSave : dataSaves,dataCount:dataCounts, isLoading : false},()=>{
             this._storeData('@SaveDataMeter',JSON.stringify(this.state.dataMeter))
+            if(this.state.dataCount.reading == 0){
+                this.setState({selModal  : false})
+            }
         });
     }
 
@@ -249,11 +259,11 @@ class UploadAll extends Component {
         const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
         const dataMeters = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
         const dataSaves = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
-        console.log('dataSaves',dataSaves);
+
         const dataCounts = {
-            total : dataAll.length,
+            total : Distinct(dataAll, 'meter_id').length,
             reading : dataMeters.length,
-            unreading : dataAll.length - dataSaves.length
+            unreading : Distinct(dataAll, 'meter_id').length - dataSaves.length
         }
 
         const data = {
@@ -276,9 +286,9 @@ class UploadAll extends Component {
         const dataSaves = this.state.dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
 
         const dataCounts = {
-            total : dataAlls.length,
+            total : Distinct(dataAlls, 'meter_id').length,
             reading : dataSaves.length,
-            unreading : dataAlls.length - dataSaves.length
+            unreading : Distinct(dataAlls, 'meter_id').length - dataSaves.length
         }
 
         console.log('dataSaves',dataSaves);
@@ -350,7 +360,7 @@ class UploadAll extends Component {
     renderItem =({item,index})=>{
         console.log('Render Item ',item);
         const satuan = {
-            E : 'KWH',
+            E : 'Kwh',
             G : 'M2',
             W : 'm2'
         }
@@ -370,10 +380,16 @@ class UploadAll extends Component {
                             </View>
                         </TouchableOpacity>
                         <View style={Styles.viewContent}>
-                            <View style={Styles.textWrap}><Text style={Styles.text}>{item.meterId}</Text></View>
-                            <View style={Styles.textWrap}><Text style={Styles.text}>{item.cpName}</Text></View>
-                            <View style={Styles.textWrap}><Text style={Styles.text}><Icon size={15} name="md-time" /> {moment(item.readingDate).format('DD-MMMM-YYYY')}</Text></View>
+                            <Text style={[Styles.text,{fontSize  : 17, fontWeight :'bold',marginLeft : 10}]}>{item.meterId}</Text>
+                            <View style={Styles.textWrap}><Text style={Styles.text}>Last Read : {item.lastRead} {satuan[item.meterType]}</Text></View>
                             <View style={Styles.textWrap}><Text style={Styles.text}>Read : {item.meteran} {satuan[item.meterType]}</Text></View>
+                            
+                            <View style={Styles.textWrap}><Text style={Styles.text}>Debtor List :</Text></View>
+                            {item.cpName.map((val,key)=>
+                                <View key={key} style={Styles.textWrap}><Text style={Styles.text}> - {val.debtor_name}</Text></View>
+                            )}
+                            <View style={Styles.textWrap}><Text style={[Styles.text,{color : '#adadad'}]}><Icon size={15} style={{color : '#adadad'}} name="md-time" /> {moment(item.readingDate).format('DD-MMMM-YYYY')}</Text></View>
+                            <View style={{marginVertical: 3}}></View>
                             <View style={Styles.listBottom}>
                                 <TouchableOpacity style={[Styles.btnWhite,{backgroundColor:background.primary}]}  onPress={()=>this.handleAlert('delete',item)}>
                                     <Text>Delete</Text>
@@ -412,6 +428,7 @@ class UploadAll extends Component {
 
         return (
             <View style={styles.container}>
+
                 <View style={styles.top}>
                     <RoundedView renderContent={this.renderPicker('Tower')} width='85%' height="8%"/>
                 </View>
@@ -466,6 +483,7 @@ class UploadAll extends Component {
                             <Text style={{fontSize:fonts.md,textAlign:'center'}}>Meter Type : {type[this.state.selType]}</Text>
                             
                         </View>
+                        <CSpinner visible={this.state.isLoading} />
                         <FlatList 
                         // style={{marginTop:20}}
                         data={this.state.dataSave} 

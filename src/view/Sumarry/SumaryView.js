@@ -13,7 +13,7 @@ import {
     Alert,
     ScrollView
  } from "react-native";
-import Styles from './Style2';
+import Styles from './Style';
 import moment from "moment"
 import RNFetchBlob from 'rn-fetch-blob';
 import {urlApi} from '@Config/Services';
@@ -21,6 +21,7 @@ import { Actions } from 'react-native-router-flux'
 import RoundedView from '@Components/UI/RoundedView';
 import Icon from "react-native-vector-icons/Ionicons";
 import {background,fonts,colors} from '@Assets/styles/base';
+import { Distinct } from "@Components/Function/Query";
 import MAIN from '@Assets/styles/Theme'
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -29,6 +30,7 @@ const type = {
     W : 'Water',
     G : 'Gas'
 }
+import CSpinner from '../components/Alert/CSpinner';
 
 class SummaryView extends Component {
 
@@ -55,7 +57,8 @@ class SummaryView extends Component {
             },
             name : '',
             selModal : false,
-            viewI : false
+            viewI : false,
+            isLoading : false
         }
     }
 
@@ -68,7 +71,6 @@ class SummaryView extends Component {
         const dataAsyncSave = await AsyncStorage.getItem('@SaveDataMeter')
         const dataAsyncTower = await AsyncStorage.getItem('@DataTower')
         const name = await AsyncStorage.getItem('@Name')
-        console.log('dataAsyncSave',dataAsyncSave);
         if(dataAsyncSave){
             const dataAlls = JSON.parse(dataAll)
             const dataMeters = JSON.parse(dataAsyncSave)
@@ -76,34 +78,34 @@ class SummaryView extends Component {
 
             const dataSaves = dataMeters.filter(item => item.entity.trim() == dataTowers[0].entity_cd && item.project.trim() == dataTowers[0].project_no && item.meterType == this.state.selType);
 
-            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
+            const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType  && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
             const dataCounts = {
-                total : dataAl.length,
+                total : Distinct(dataAl,"meter_id").length,
                 reading : dataSaves.length,
-                unreading : dataAl.length - dataSaves.length
+                unreading : Distinct(dataAl,"meter_id").length - dataSaves.length
             }
 
             const data = {
                 dataAll : dataAlls,
+                dataTower : dataTowers,
                 dataMeterAll : dataMeters,
                 dataMeter : dataMeters,
                 dataSave : dataSaves,
-                dataTower : dataTowers,
                 selTower : dataTowers[0],
                 dataCount : dataCounts,
                 name : name
             }
 
             this.setState(data)
-        }else {
+        } else {
             const dataAlls = JSON.parse(dataAll)
             const dataTowers = JSON.parse(dataAsyncTower)
             const dataAl = dataAlls.filter(item => item.meter_type == this.state.selType && item.project_no.trim() == dataTowers[0].project_no && item.entity_cd.trim() == dataTowers[0].entity_cd)
 
             const dataCounts = {
-                total : dataAl.length,
+                total : Distinct(dataAl,"meter_id").length,
                 reading : 0,
-                unreading : dataAl.length
+                unreading : Distinct(dataAl,"meter_id").length
             }
 
             const data = {
@@ -113,10 +115,9 @@ class SummaryView extends Component {
                 dataCount : dataCounts,    
             }
             this.setState(data)
-            console.log('dataAsyncSave',data);
         }
     }
-    
+
     seeAll = () =>{
         this.state.dataSave.length !== 0 ?
         this.setState({selModal : true})
@@ -137,7 +138,7 @@ class SummaryView extends Component {
     uploadData = (data) =>{
         const dm = data.dataMeter
         const tw = this.state.selTower
-        
+        this.setState({isLoading :true});
         const formData = {
             cons  : tw.db_profile,
             entity : dm.entity_cd.trim(),
@@ -147,10 +148,11 @@ class SummaryView extends Component {
             readDate : moment(data.readingDate).format('YYYYMMDD'),
             lot_no : dm.lot_no,
             curr_read : data.meteran,
-            curr_read_high : null
+            curr_read_high : null,
+            audit_user : this.state.name
         }
 
-        // console.log('formData',formData);
+        console.log('formData',formData);
         // this.delete(formData)
 
         fetch(urlApi+'c_meter_utility/saveDataMu',{
@@ -222,7 +224,10 @@ class SummaryView extends Component {
                     }
                 }
                 
-            })
+            }).catch((error) => {
+                console.log('Error =>>',error);
+            });
+
         })
        
     }
@@ -239,23 +244,26 @@ class SummaryView extends Component {
         }
         console.log('dataMeters',dataMeters);
         console.log('dataSaves',dataSaves);        
-        this.setState({dataMeter:dataMeters,dataSave : dataSaves,dataCount:dataCounts},()=>{
+        this.setState({dataMeter:dataMeters,dataSave : dataSaves,dataCount:dataCounts, isLoading : false},()=>{
             this._storeData('@SaveDataMeter',JSON.stringify(this.state.dataMeter))
+            if(this.state.dataCount.reading == 0){
+                this.setState({selModal  : false})
+            }
         });
     }
 
     handleChangePicker = (ref) =>{
         const sel = ref.selTower
-        const dataMeter = this.state.dataMeterAll;
+        const dataMeter = this.state.dataMeterAll
 
         const dataAll = this.state.dataAll.filter(item => item.meter_type == this.state.selType && item.entity_cd.trim() == sel.entity_cd && item.project_no.trim() == sel.project_no)
         const dataMeters = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
-        const dataSaves = this.state.dataMeter.filter(item => item.entity == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
+        const dataSaves = dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == this.state.selType);
 
         const dataCounts = {
-            total : dataAll.length,
+            total : Distinct(dataAll, 'meter_id').length,
             reading : dataMeters.length,
-            unreading : dataAll.length - dataSaves.length
+            unreading : Distinct(dataAll, 'meter_id').length - dataSaves.length
         }
 
         const data = {
@@ -266,6 +274,7 @@ class SummaryView extends Component {
         }
 
         this.setState(data)
+        console.log('data',data);
     }
 
     handleChangeTab = (tab) =>{
@@ -277,9 +286,9 @@ class SummaryView extends Component {
         const dataSaves = this.state.dataMeter.filter(item => item.entity.trim() == sel.entity_cd && item.project.trim() == sel.project_no && item.meterType == tab );
 
         const dataCounts = {
-            total : dataAlls.length,
+            total : Distinct(dataAlls, 'meter_id').length,
             reading : dataSaves.length,
-            unreading : dataAlls.length - dataSaves.length
+            unreading : Distinct(dataAlls, 'meter_id').length - dataSaves.length
         }
 
         console.log('dataSaves',dataSaves);
@@ -297,7 +306,7 @@ class SummaryView extends Component {
             mode={this.props.model}
             onValueChange={(itemValue, itemIndex) =>{
               ref['sel'+i] = itemValue
-              this.handleChangePicker (ref)
+              this.handleChangePicker(ref)
             }}
           >
             {this[fn]()}
@@ -351,7 +360,7 @@ class SummaryView extends Component {
     renderItem =({item,index})=>{
         console.log('Render Item ',item);
         const satuan = {
-            E : 'KWH',
+            E : 'Kwh',
             G : 'M2',
             W : 'm2'
         }
@@ -371,11 +380,17 @@ class SummaryView extends Component {
                             </View>
                         </TouchableOpacity>
                         <View style={Styles.viewContent}>
-                            <View style={Styles.textWrap}><Text style={Styles.text}>{item.meterId}</Text></View>
-                            <View style={Styles.textWrap}><Text style={Styles.text}>{item.cpName}</Text></View>
-                            <View style={Styles.textWrap}><Text style={Styles.text}><Icon size={15} name="md-time" /> {moment(item.readingDate).format('DD-MMMM-YYYY')}</Text></View>
+                            <Text style={[Styles.text,{fontSize  : 17, fontWeight :'bold',marginLeft : 10}]}>{item.meterId}</Text>
+                            <View style={Styles.textWrap}><Text style={Styles.text}>Last Read : {item.lastRead} {satuan[item.meterType]}</Text></View>
                             <View style={Styles.textWrap}><Text style={Styles.text}>Read : {item.meteran} {satuan[item.meterType]}</Text></View>
-                            {/* <View style={Styles.listBottom}>
+                            
+                            <View style={Styles.textWrap}><Text style={Styles.text}>Debtor List :</Text></View>
+                            {item.cpName.map((val,key)=>
+                                <View key={key} style={Styles.textWrap}><Text style={Styles.text}> - {val.debtor_name}</Text></View>
+                            )}
+                            <View style={Styles.textWrap}><Text style={[Styles.text,{color : '#adadad'}]}><Icon size={15} style={{color : '#adadad'}} name="md-time" /> {moment(item.readingDate).format('DD-MMMM-YYYY')}</Text></View>
+                            {/* <View style={{marginVertical: 3}}></View>
+                            <View style={Styles.listBottom}>
                                 <TouchableOpacity style={[Styles.btnWhite,{backgroundColor:background.primary}]}  onPress={()=>this.handleAlert('delete',item)}>
                                     <Text>Delete</Text>
                                 </TouchableOpacity>
@@ -413,6 +428,7 @@ class SummaryView extends Component {
 
         return (
             <View style={styles.container}>
+
                 <View style={styles.top}>
                     <RoundedView renderContent={this.renderPicker('Tower')} width='85%' height="8%"/>
                 </View>
@@ -445,7 +461,7 @@ class SummaryView extends Component {
                                     <TouchableOpacity style={Styles.btnWhite} onPress={()=>this.seeAll()}>
                                         <Text>See All</Text>
                                     </TouchableOpacity>
-                                    {/* <TouchableOpacity style={Styles.btnWhite} onPress={()=>this.uploadAll()}>
+                                    {/* <TouchableOpacity style={Styles.btnWhite} onPress={()=>this.handleAlert('uploadAll')}>
                                         <Text>Upload All</Text>
                                     </TouchableOpacity> */}
                                 </View>
@@ -467,6 +483,7 @@ class SummaryView extends Component {
                             <Text style={{fontSize:fonts.md,textAlign:'center'}}>Meter Type : {type[this.state.selType]}</Text>
                             
                         </View>
+                        <CSpinner visible={this.state.isLoading} />
                         <FlatList 
                         // style={{marginTop:20}}
                         data={this.state.dataSave} 

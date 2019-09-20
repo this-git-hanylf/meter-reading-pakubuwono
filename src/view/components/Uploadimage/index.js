@@ -13,12 +13,15 @@ export default class MeterPhoto extends Component {
 
     handleChoosePhoto = () => {
         const options = {
+            title: 'Select Avatar',
+            customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
             noData: true,
             storageOptions :{
+                skipBackup: true,
                 path : 'MeterRiding'
             }
         };
-        ImagePicker.showImagePicker(options, response => {
+        ImagePicker.launchCamera(options, response => {
             if (response.uri){
                 // this.setState({ photo:response })
                 // this.setState(state => ({
@@ -114,8 +117,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: 1,
         borderRadius: 5,
-        width: wp('26.50%'),
-        height : wp('26.50%'),
+        width: wp('26.45%'),
+        height : wp('26.45%'),
     },
     photoIcon: {
         borderRadius: 5,

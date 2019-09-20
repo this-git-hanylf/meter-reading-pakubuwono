@@ -5,6 +5,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import {urlApi} from '@Config/Services';
 import Style from '../../theme/Style';
 import RoundedView from '@Components/UI/RoundedView';
+import CSpinner from '../components/Alert/CSpinner';
 
 class Download extends Component {
     _isMount = false;
@@ -76,7 +77,8 @@ class Download extends Component {
         .then((response) => response.json())
         .then((res)=>{
             if(!res.Error){
-                this.pushToStorage(res.Data)                
+                this.pushToStorage(res.Data)   
+                console.log('res',res);             
             } else {
                 alert(res.Pesan);
             }
@@ -152,7 +154,7 @@ class Download extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <CustomProgressBar visible={this.state.isProgress} />
+                <CSpinner visible={this.state.isProgress} />
                 <View style={{height : 20}} />
                 <RoundedView renderContent={this.renderPicker()} width='85%' height="8%"/>
                 <TouchableOpacity style={styles.button} onPress={()=>this.download()}>
@@ -162,16 +164,6 @@ class Download extends Component {
         );
     }
 }
-const CustomProgressBar = ({ visible }) => (
-    <Modal onRequestClose={() => null} visible={visible} transparent>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ borderRadius: 10, backgroundColor: 'white', padding: 25 }}>
-          <Text style={Style.textBlack}>Loading</Text>
-          <ActivityIndicator size="large" color="#0000ff" timestamp="1000" />
-        </View>
-      </View>
-    </Modal>
-  );
 
 export default Download;
 
