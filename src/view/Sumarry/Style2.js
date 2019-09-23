@@ -5,7 +5,7 @@ import MAIN from '@Assets/styles/Theme'
 export default {
     listView : {
         marginHorizontal: 5,
-        marginVertical: 10,
+        marginVertical: 3,
         backgroundColor: '#fff',
         borderRadius: 16,
         // borderWidth: 2,

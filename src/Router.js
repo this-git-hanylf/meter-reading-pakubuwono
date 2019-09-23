@@ -22,7 +22,6 @@ import Air from './view/Sumarry/Air';
 import Electricity from './view/Sumarry/Electricity';
 import Water from './view/Sumarry/Water';
 
-import BarcodeSeacrh from './view/ScanSearch/BarcodeSeacrh';
 import FilterSearch from './view/ScanSearch/FilterSearch';
 import ViewSearch from './view/ScanSearch/ViewSearch';
 
@@ -84,7 +83,6 @@ class Routes extends Component {
                     <Scene key='typeproject' component={TypeProject} NavBar={true} titleStyle={Style.textBlack} title="Type"/>
                     <Scene key='sumaryview' component={SumaryView} NavBar={true} titleStyle={Style.textBlack} title="Summary"/>
                     <Scene key='water' component={Water} hideNavBar={true} titleStyle={Style.textBlack} title=""/>
-                    <Scene key='barcodeSeacrh' component={BarcodeSeacrh}   NavBar={true} titleStyle={Style.textBlack} title=""/>
                     <Scene key='filterSearch' component={FilterSearch} NavBar={true} titleStyle={Style.textBlack} title="Filter Search"/>
                     <Scene key='viewSearch' component={ViewSearch} NavBar={true} titleStyle={Style.textBlack} title="View Search"/>
                     <Scene key='seeAll' component={SeeAll} hideNavBar={true} titleStyle={Style.textBlack} title=""/>
