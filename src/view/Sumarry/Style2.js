@@ -85,13 +85,13 @@ export default {
         height: 200,
         borderRadius: 5,
     },
-    photoViewer :{backgroundColor:'rgba(0,0,0,0.4)',flex:1,justifyContent:'flex-end'},
+    photoViewer :{backgroundColor:'rgba(0,0,0,0)',flex:1,justifyContent:'flex-end'},
     photoViewerContent : {
         height : hp('80%'), 
         backgroundColor:'#fff',
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
- 
+        elevation : 10
     },
 
     cardContainer : {
