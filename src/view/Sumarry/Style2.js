@@ -10,7 +10,8 @@ export default {
         borderRadius: 16,
         // borderWidth: 2,
         elevation : 7,
-        backgroundColor:'#fff'
+        backgroundColor:'#fff',
+        overflow: 'hidden',
     },
     view :{
         paddingHorizontal: 10,
@@ -178,5 +179,15 @@ export default {
         right:16,
         top:4,
     },
-    
+    divider : {
+        alignSelf : 'center',
+        width : '50%',
+        borderWidth : 1.5,
+        borderColor: "#dedede",
+        borderRadius : 80 
+    },
+    expandItem : { 
+        overflow: "hidden",
+        paddingTop : 5 ,
+    }
 }

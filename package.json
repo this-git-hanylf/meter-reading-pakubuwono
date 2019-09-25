@@ -38,7 +38,8 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "rn-fetch-blob": "^0.10.15",
-    "rn-tooltip": "^1.1.2"
+    "rn-tooltip": "^1.1.2",
+    "rnal": "^0.2.1"
   },
   "devDependencies": {
     "babel-core": "^7.0.0-bridge.0",

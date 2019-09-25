@@ -92,7 +92,6 @@ class ReadingForm extends Component {
                 const datas = {
                     meterId: x.meter_id,
                     cpName: Select(cek2, ["debtor_name", "lot_no"]),
-                    // cpName :"",
                     lotNo: x.lot_no,
                     lastRead: x.last_read,
                     meterType: x.meter_type,

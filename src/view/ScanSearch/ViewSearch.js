@@ -1,5 +1,6 @@
 //import liraries
 import React, { Component } from "react";
+import { Fade } from "rnal";
 import {
     View,
     Text,
@@ -7,10 +8,12 @@ import {
     AsyncStorage,
     Dimensions,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     Image,
     Modal,
     ScrollView,
-    FlatList
+    FlatList,
+    Animated
 } from "react-native";
 import { Query, Select } from "@Components/Function/Query";
 import Styles from "../Sumarry/Style2";
@@ -27,6 +30,7 @@ import {
 } from "react-native-responsive-screen";
 import TextInputs from "../components/InputText/TextInput";
 import CSpinner from '../components/Alert/CSpinner';
+import FlatItem from './_item';
 // create a component
 class ViewSearch extends Component {
     mounted = false;
@@ -41,7 +45,10 @@ class ViewSearch extends Component {
             showModalData: false,
             showModalPict: false,
             activeTab: "read",
-            isLoading : true
+            isLoading : true,
+
+            expandItem : null,
+            animation : new Animated.Value()
         };
 
         console.log("Props", props);
@@ -95,6 +102,7 @@ class ViewSearch extends Component {
                         dataPict : [],
                         meteran : 0,
                         lastRead : data.last_read,
+                        lastDate : data.last_read_date,
                         meterType : data.meter_type,
                         cpName : [{debtor_name : data.debtor_name, lot_no:data.lot_no}]
                     })
@@ -108,6 +116,7 @@ class ViewSearch extends Component {
                         project : data.project_no.trim(),
                         meterId : data.meter_id,
                         dataPict : [],
+                        lastDate : data.last_read_date,
                         meteran : 0,
                         lastRead : data.last_read,
                         meterType : data.meter_type,
@@ -135,21 +144,26 @@ class ViewSearch extends Component {
         })
     }
 
-    handlePressData = data => {
-        this.setState({ showModalData: true, selData: data });
+    handlePressPict = data => {
+        this.setState({ showModalPict: true, selPict: data.dataPict, selPictId : data.meterId });
     };
 
-    handlePressPict = data => {
-        this.setState({ showModalPict: true, selPict: data.dataPict });
-    };
+    handleLoadMore = () =>{
+        alert("oe")
+    }
+
+    renderItem = ({item,index}) =>{
+        const { dataMeter, selPict, activeTab, expandItem } = this.state;
+        
+        const data = item;
+        return(
+            <FlatItem data={data} index={index} activeTab={activeTab} handlePressPict={this.handlePressPict} />
+        );
+    }
 
     render() {
-        const { dataMeter, selPict, activeTab } = this.state;
-        const satuan = {
-            E: "KWH",
-            G: "M2",
-            W: "m2"
-        };
+        const { dataMeter, selPict, activeTab,expandItem } = this.state;
+        
         return (
             <View style={styles.container}>
                 <View style={styles.readForm}>
@@ -173,7 +187,6 @@ class ViewSearch extends Component {
                         backgroundColor: "#4A98F7",
                         height: 50,
                         flexDirection: "row",
-                        marginBottom: 10,
                         borderBottomRightRadius: 20,
                         borderBottomLeftRadius: 20,
                         elevation: 5
@@ -194,128 +207,50 @@ class ViewSearch extends Component {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <ScrollView>
-                {dataMeter.length > 0 ? (
-                    dataMeter.map((data, key) => (
-                        <TouchableOpacity
-                            key={key}
-                            style={Styles.listView}
-                            onPress={() => this.handlePressData(data)}
-                        >
-                            <View style={Styles.view}>
-                                <View style={Styles.listViewContent}>
-                                    {activeTab == "read"?
-                                        <TouchableOpacity
-                                            style={Styles.viewPhoto}
-                                            onPress={() =>
-                                                this.handlePressPict(data)
-                                            }
-                                        >
-                                            {data.dataPict.length !== 0 ? (
-                                                <Image
-                                                    style={Styles.viewPhotoIcon}
-                                                    source={{
-                                                        uri: data.dataPict[0].uri
-                                                    }}
-                                                />
-                                            ) : null}
-                                            <View style={Styles.photoBadge}>
-                                                <Text
-                                                    style={[
-                                                        Style.textSmall,
-                                                        Style.textBlack
-                                                    ]}
-                                                >
-                                                    {data.dataPict.length} Photos
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        :
-                                        null
-                                    }
-                                    <View style={Styles.viewContent}>
-                                        <View style={Styles.textWrap}>
-                                            <Text
-                                                style={[
-                                                    Styles.text,
-                                                    Style.textBlack
-                                                ]}
-                                            >
-                                                {data.meterId}
-                                            </Text>
-                                        </View>
-                                        <View style={Styles.textWrap}>
-                                            <Text
-                                                style={[
-                                                    Styles.text,
-                                                    Style.textGreyDark
-                                                ]}
-                                            >
-                                                {data.unitNo}
-                                            </Text>
-                                        </View>
-                                        {/* <View style={Styles.textWrap}><Text style={Styles.text}>{data.cpName}</Text></View> */}
-                                        <View style={Styles.textWrap}>
-                                            <Text
-                                                style={[
-                                                    Styles.text,
-                                                    Style.textGrey
-                                                ]}
-                                            >
-                                                <Icon
-                                                    size={15}
-                                                    name="md-time"
-                                                />{" "}
-                                                {moment(
-                                                    data.readingDate
-                                                ).format("DD-MMMM-YYYY")}
-                                            </Text>
-                                        </View>
-                                        <View style={Styles.textWrap}>
-                                            <Text
-                                                style={[
-                                                    Styles.text,
-                                                    Style.textBlack
-                                                ]}
-                                            >
-                                                Read : {data.meteran}{" "}
-                                                {satuan[data.meterType]}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </View>
+                
+                <FlatList
+                    data={dataMeter}
+                    keyExtractor={(item,index)=>item.meterId}
+                    refreshing={false}
+                    onRefresh={()=>{
+                        this.getData()
+                    }}
+                    indicatorStyle={"black"}
+                    renderItem={(item,index)=>this.renderItem(item,index)}
+                    scrollEnabled={true}
+                    ListEmptyComponent={()=>{
+                        return(
+                            <View style={styles.nullList}>
+                                <Text style={styles.title}>Data Kosong</Text>
                             </View>
-                            {/* <View style={{alignSelf:'center',width:"88%",height:'0.5%', backgroundColor:'#333'}} /> */}
-                        </TouchableOpacity>
-                    ))
-                ) : (
-                    <View style={styles.nullList}>
-                        <Text style={styles.title}>Data Kosong</Text>
-                    </View>
-                )}
-                </ScrollView>
-                <Modal 
-                visible={this.state.showModalData}
-                animationType="fade"
-                transparent={false}
-                onRequestClose={() => {
-                    this.setState({showModalData:false})
+                        )
+                    }}
+                    extraData={this.state}
+                />
+                
+                <Modal animationType="slide"
+                transparent={true} visible={this.state.showModalPict} onRequestClose={() => {
+                    this.setState({showModalPict:false})
                 }}>
-                    <View style={[Styles.photoViewer,background.primary]}>
-                        <View style={Styles.headerModal}>
-                            {/* <Text style={{fontSize:fonts.md,textAlign:'center'}}>Meter Type : {type[this.state.selType]}</Text> */}
-                            
-                        </View>
-                        <FlatList 
-                        // style={{marginTop:20}}
-                        data={this.state.dataSave} 
-                        renderItem={(item,index)=>this.renderItem(item,index)}
-                        keyExtractor={(item,index)=>item.meterId}
-                        scrollEnabled={true}/>
-                        <TouchableOpacity style={styles.iconBack} onPress={()=>this.setState({showModalData:false})} >
-                            <Icon size={30} name="md-close"/>
+                    <View style={Styles.photoViewer}>
+                        <View style={Styles.photoViewerContent}>
+                        <TouchableOpacity style={styles.iconBack} onPress={()=>this.setState({showModalPict:false})}>
+                            <Icon size={25} name="md-close" />
                         </TouchableOpacity>
-                       
+                            <View style={Styles.photoWrap}>
+                                <Text style={{textAlign:'center',fontWeight: 'bold'}}>{this.state.selPictId}</Text>
+                                <ScrollView contentContainerStyle={Styles.photo}>
+                                    {this.state.selPict.map(photo => (
+                                        <View style={Styles.photoItem} key={photo.uri}>
+                                            <Image 
+                                            source={{ uri: photo.uri }}
+                                            style={Styles.photoIcon}
+                                            />
+                                        </View>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        </View>
                     </View>
                 </Modal>
                 <CSpinner visible={this.state.isLoading} />
