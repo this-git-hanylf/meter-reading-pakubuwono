@@ -39,13 +39,14 @@ class ViewSearch extends Component {
         super(props);
 
         this.state = {
+            dataqr : "",
             dataMeter: [],
             selData: [],
             selPict: [],
             showModalData: false,
             showModalPict: false,
             activeTab: "read",
-            isLoading : true,
+            isLoading : false,
 
             expandItem : null,
             animation : new Animated.Value()
@@ -68,28 +69,51 @@ class ViewSearch extends Component {
         if (this.state.activeTab == "read") {
             const dataAsync = await AsyncStorage.getItem("@SaveDataMeter");
             let dataJson = JSON.parse(dataAsync);
+            
+            let resultQuery = [] ;
 
-            const resultQuery = dataJson.filter(
-                item =>
-                    item.project == selTower.project_no &&
-                    item.meterType == selMeterType.type
-            );
+            if(dataJson){
+                resultQuery = dataJson.filter(
+                    item =>{
+                        if(this.state.dataqr !== ""){
+                            return item.project == selTower.project_no &&
+                            item.meterType == selMeterType.type &&
+                            item.meterId.toUpperCase().indexOf(this.state.dataqr.toUpperCase()) >= 0
+                        } else {
+                            return item.project == selTower.project_no &&
+                            item.meterType == selMeterType.type
+                        }
+                    }
+                        
+                );
+            }
 
             const result = resultQuery;
-            console.log("result", result);
 
-            if (result) {
-                if (this.mounted) {
-                    this.setState({ dataMeter: result, isLoading : false });
-                }
+            if (this.mounted) {
+                this.setState({ dataMeter: result, isLoading : false });
             }
         } else {
             const dataAsync = await AsyncStorage.getItem("@DataMeter");
+            const dataSave = await AsyncStorage.getItem("@SaveDataMeter");
+
             let dataJson = JSON.parse(dataAsync);
-            const resultQuery = dataJson.filter(
-                item =>
-                    item.project_no == selTower.project_no &&
-                    item.meter_type == selMeterType.type 
+            let saveJson = JSON.parse(dataSave);
+
+            const resultJson = dataJson.filter(({ meter_id : id1, meter_type : type1,project_no : proj1 }) => 
+            !saveJson.some(({ meterId: id2, meterType : type2, project : proj2 }) => id2 === id1 && type1 === type2 && proj1.trim() === proj2.trim() ));
+            
+            const resultQuery = resultJson.filter(
+                item => {
+                    if(this.state.dataqr !== ""){
+                        return item.project_no == selTower.project_no &&
+                        item.meter_type == selMeterType.type &&
+                        item.meter_id.toUpperCase().indexOf(this.state.dataqr.toUpperCase()) >= 0
+                    } else {
+                        return item.project_no == selTower.project_no &&
+                        item.meter_type == selMeterType.type
+                    }
+                }
             );
             let result = [];
             let parser = {};
@@ -126,13 +150,19 @@ class ViewSearch extends Component {
             });
             if (result) {
                 if (this.mounted) {
-                    this.setState({ dataMeter: result.slice(0,9)},()=>{
+                    this.setState({ dataMeter: result},()=>{
                         this.setState({isLoading : false })
                     });
                 }
             }
         }
     };
+
+    handleTextSearch = val => {
+        this.setState({ dataqr: val },()=>{
+            this.getData()
+        })
+    }
 
     handleChangeTab = (tab) =>{
         this.setState({isLoading : true },()=>{
@@ -170,9 +200,9 @@ class ViewSearch extends Component {
                     <TextInputs
                         width="78%"
                         height="8%"
-                        placeholder="Input Meter ID"
+                        placeholder="Search by Meter ID"
                         value={this.state.dataqr}
-                        onChangeText={val => this.setState({ dataqr: val })}
+                        onChangeText={val => this.handleTextSearch(val)}
                     />
                     <TouchableOpacity
                         style={styles.btnScan}

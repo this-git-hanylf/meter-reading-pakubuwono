@@ -155,7 +155,8 @@ export default {
     },
     text: {
         fontSize: 16,
-        marginVertical: hp("0.5%")
+        marginVertical: hp("0.5%"),
+        fontFamily: "Montserrat-Regular",
     },
     textTitle: {
         fontSize: 17,

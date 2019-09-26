@@ -11,6 +11,7 @@ import {
 import Styles from "../Sumarry/Style2";
 import Style from "../../theme/Style";
 import Icon from "react-native-vector-icons/Ionicons";
+import FaIcon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
 class Item extends React.PureComponent {
     constructor(props) {
@@ -64,6 +65,7 @@ class Item extends React.PureComponent {
 
     render() {
         const { activeTab, data, index } = this.props;
+        console.log('data',data);
         const { expandItem } = this.state;
         const satuan = {
             E: "KWH",
@@ -113,28 +115,56 @@ class Item extends React.PureComponent {
                                     <Text
                                         style={[Styles.text, Style.textBlack]}
                                     >
+                                        {"Meter ID : "}
                                         {data.meterId}
                                     </Text>
                                 </View>
-                                {/* <View style={Styles.textWrap}><Text style={Styles.text}>{data.cpName}</Text></View> */}
                                 <View style={Styles.textWrap}>
-                                    <Text style={[Styles.text, Style.textGrey]}>
-                                        <Icon size={15} name="md-time" />{" "}
-                                        {moment(activeTab == "read" ? data.readingDate : data.lastDate).format(
-                                            "DD-MMMM-YYYY"
-                                        )}
+                                    <Text style={[Styles.text, Style.textBlack]}>
+                                        {"Last Date"}
+                                    </Text>
+                                    <Text style={[Styles.text, Style.textBlack]}>
+                                        {"Last Read"}
                                     </Text>
                                 </View>
                                 <View style={Styles.textWrap}>
-                                    <Text
-                                        style={[Styles.text, Style.textBlack]}
-                                    >
-                                        {activeTab == "read" ?"Read":"Last Read"}
-                                        {" : "}
-                                        {activeTab == "read" ? data.meteran : data.lastRead }{" "}
+                                    <Text style={[Styles.text, Style.textGreyLight]}>
+                                        <Icon size={15} name="md-time" />{" "}
+                                        {moment(data.lastDate).format(
+                                            "DD-MMM-YY"
+                                        )}
+                                    </Text>
+                                    <Text style={[Styles.text, Style.textGreyLight]}>
+                                        <Icon size={15} name="md-speedometer" />{" "}
+                                        {parseFloat(data.lastRead)}{" "}
                                         {satuan[data.meterType]}
                                     </Text>
                                 </View>
+                                {activeTab == "read" ?
+                                <View style={Styles.textWrap}>
+                                    <Text style={[Styles.text, Style.textBlack]}>
+                                        {"Current Date"}
+                                    </Text>
+                                    <Text style={[Styles.text, Style.textBlack]}>
+                                        {"Current Read"}
+                                    </Text>
+                                </View>
+                                : null }
+                                {activeTab == "read" ?
+                                <View style={Styles.textWrap}>
+                                        <Text style={[Styles.text, Style.textGreyLight]}>
+                                            <Icon size={15} name="md-time" />{" "}
+                                            {moment(data.readingDate).format(
+                                                "DD-MMM-YY"
+                                            )}
+                                        </Text>
+                                        <Text style={[Styles.text, Style.textGreyLight]}>
+                                            <Icon size={15} name="md-speedometer" />{" "}
+                                            {parseFloat(data.meteran)}{" "}
+                                            {satuan[data.meterType]}
+                                        </Text>
+                                </View>
+                                : null }
                             </View>
                         </View>
                         <View style={[Styles.expandItem,{paddingHorizontal : activeTab == "read" ? 0 : 10}]} onLayout={this._setMinHeight.bind(this)}>

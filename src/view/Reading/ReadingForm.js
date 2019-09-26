@@ -136,6 +136,7 @@ class ReadingForm extends Component {
             cpName: x.cpName,
             unitNo: x.lotNo,
             lastRead: x.lastRead,
+            lastDate: x.dataMeter.last_read_date,
             meterType: x.meterType,
             meteran: x.meteran,
             dataMeter: x.dataMeter,

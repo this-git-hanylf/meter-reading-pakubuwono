@@ -55,7 +55,7 @@ export default {
     textWrap :{
         marginHorizontal:10,
         flexDirection:'row',
-        // justifyContent:'center',
+        justifyContent :'space-between',
         alignItems: 'center',
     },
     text :{

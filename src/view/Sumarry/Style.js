@@ -63,7 +63,8 @@ export default {
     },
     text: {
         flex: 1,
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        fontFamily: "Montserrat-Regular",
     },
     photoWrap: {
         marginVertical: hp("4%"),
@@ -155,7 +156,8 @@ export default {
     },
     text: {
         fontSize: 16,
-        marginVertical: hp("0.5%")
+        marginVertical: hp("0.5%"),
+        fontFamily: "Montserrat-Regular",
     },
     textTitle: {
         fontSize: 17,

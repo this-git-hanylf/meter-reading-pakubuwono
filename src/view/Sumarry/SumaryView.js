@@ -17,6 +17,7 @@ import Styles from './Style';
 import moment from "moment"
 import RNFetchBlob from 'rn-fetch-blob';
 import {urlApi} from '@Config/Services';
+import Style from "../../theme/Style";
 import { Actions } from 'react-native-router-flux'
 import RoundedView from '@Components/UI/RoundedView';
 import Icon from "react-native-vector-icons/Ionicons";
@@ -376,11 +377,11 @@ class SummaryView extends Component {
                                 :console.log('ok')
                             }
                             <View style={Styles.photoBadge}>
-                                <Text>{item.dataPict.length} Photos</Text>
+                                <Text style={Style.textBlack}>{item.dataPict.length} Photos</Text>
                             </View>
                         </TouchableOpacity>
                         <View style={Styles.viewContent}>
-                            <Text style={[Styles.text,{fontSize  : 17, fontWeight :'bold',marginLeft : 10}]}>{item.meterId}</Text>
+                            <Text style={[Styles.text,{fontSize  : 17, fontWeight :'bold',marginLeft : 10}]}>Meter ID : {item.meterId}</Text>
                             <View style={Styles.textWrap}><Text style={Styles.text}>Last Read : {item.lastRead} {satuan[item.meterType]}</Text></View>
                             <View style={Styles.textWrap}><Text style={Styles.text}>Read : {item.meteran} {satuan[item.meterType]}</Text></View>
                             
@@ -392,10 +393,10 @@ class SummaryView extends Component {
                             {/* <View style={{marginVertical: 3}}></View>
                             <View style={Styles.listBottom}>
                                 <TouchableOpacity style={[Styles.btnWhite,{backgroundColor:background.primary}]}  onPress={()=>this.handleAlert('delete',item)}>
-                                    <Text>Delete</Text>
+                                    <Text style={{fontFamily : 'Montserrat-Regular'}}>Delete</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={Styles.btnWhite}  onPress={()=>this.handleAlert('uploadData',item)}>
-                                    <Text>Upload</Text>
+                                    <Text style={{fontFamily : 'Montserrat-Regular'}}>Upload</Text>
                                 </TouchableOpacity>
                             </View> */}
                         </View>
@@ -438,13 +439,13 @@ class SummaryView extends Component {
                         <View style={Styles.cardContainer}>
                             <View style={Styles.cardHead}>
                                 <TouchableOpacity style={[Styles.tab,tabColor[this.state.selType == 'E' ? 'T' : 'F'],tabRadius['left']]} onPress={()=>this.handleChangeTab('E')}>
-                                    <Text>Electric</Text>
+                                    <Text style={{fontFamily : 'Montserrat-Regular'}}>Electric</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[Styles.tab,tabColor[this.state.selType == 'W' ? 'T' : 'F']]} onPress={()=>this.handleChangeTab('W')}>
-                                    <Text>Water</Text>
+                                    <Text style={{fontFamily : 'Montserrat-Regular'}}>Water</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[Styles.tab,tabColor[this.state.selType == 'G' ? 'T' : 'F'],tabRadius['right']]} onPress={()=>this.handleChangeTab('G')}>
-                                    <Text>Gas</Text>
+                                    <Text style={{fontFamily : 'Montserrat-Regular'}}>Gas</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={Styles.cardContent}>
@@ -459,10 +460,10 @@ class SummaryView extends Component {
                             <View style={Styles.cardFooter}>
                                 <View style={Styles.cardBottom}>
                                     <TouchableOpacity style={Styles.btnWhite} onPress={()=>this.seeAll()}>
-                                        <Text>See All</Text>
+                                        <Text style={{fontFamily : 'Montserrat-Regular'}}>See All</Text>
                                     </TouchableOpacity>
                                     {/* <TouchableOpacity style={Styles.btnWhite} onPress={()=>this.handleAlert('uploadAll')}>
-                                        <Text>Upload All</Text>
+                                        <Text style={{fontFamily : 'Montserrat-Regular'}}>Upload All</Text>
                                     </TouchableOpacity> */}
                                 </View>
                             </View>
@@ -480,7 +481,7 @@ class SummaryView extends Component {
                 }}>
                     <View style={[{flex:1},background.primary]}>
                         <View style={Styles.headerModal}>
-                            <Text style={{fontSize:fonts.md,textAlign:'center'}}>Meter Type : {type[this.state.selType]}</Text>
+                            <Text style={[Style.textGreyLight,{fontSize:fonts.md,textAlign:'center'}]}>Meter Type : {type[this.state.selType]}</Text>
                             
                         </View>
                         <CSpinner visible={this.state.isLoading} />
