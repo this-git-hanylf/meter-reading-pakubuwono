@@ -28,6 +28,7 @@
     "react-native-image-picker": "^0.28.0",
     "react-native-linear-gradient": "^2.5.3",
     "react-native-modalize": "^1.2.1",
+    "react-native-permissions": "^1.2.1",
     "react-native-progress": "^3.5.0",
     "react-native-qrcode-scanner": "^1.1.2",
     "react-native-responsive-screen": "^1.2.0",

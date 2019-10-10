@@ -10,7 +10,7 @@ import Query from '@Components/Function/Query';
 import {urlApi} from '@Config/Services';
 import {USER_KEY} from '@Config/Services';
 import MAIN from '@Assets/styles/Theme'
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 // create a component
 
@@ -44,34 +44,13 @@ class Home extends Component {
     
     clickToNavigate = async(to,param) =>{
         const dataAsync = await AsyncStorage.getItem("@DataMeter");
-        if(dataAsync || to == 'download'){
+        if(dataAsync || to == 'download' || to=='setting'){
             Actions[to](param);
             this.setState({click:true})
         } else {
             alert('You must download first !')
         }
         
-    }
-
-    clickLogout = async() =>{
-        Alert.alert(
-            'IFCA R+',
-            'Logout ?',
-            [
-                { text: "Cancel", onPress: () => console.log('Cenecel') },
-                { text: "OK", onPress: () => this.logout() }
-            ],
-            { cancelable: false }
-        )
-    }
-
-    async logout(){
-        try {
-            await AsyncStorage.removeItem(USER_KEY)
-            Actions.reset('auth')
-        } catch (err) {
-            console.log('error signing out...: ', err)
-        }
     }
 
     getData = async(data)=>{
@@ -100,8 +79,9 @@ class Home extends Component {
                     <Image 
                     style={styles.iconlogo}
                     source={require('@Assets/images/login/logo-biru.png')}/>
-                    <TouchableOpacity onPress={()=>this.clickLogout()} style={styles.btnLogout}>
-                        <Text>Logout</Text>
+                    <TouchableOpacity onPress={()=>this.clickToNavigate('setting')} >
+                        <Icon name="md-settings" style={{fontSize : 34,color : MAIN.COLORS.PRIMARY}} />
+                        {/* <Text style={[Style.textBlue,{color : MAIN.COLORS.PRIMARY,fontSize : 15}]}>Setting</Text> */}
                     </TouchableOpacity>
                </View>
                <TouchableOpacity style={styles.download} onPress={()=>this.clickToNavigate('download')}>
@@ -217,8 +197,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         elevation : 20,
         borderRadius : 16,
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
         paddingVertical: 5,
+        flexDirection : 'row',
+        justifyContent : 'space-around',
+        alignItems : 'center'
     }
 });
 //make this component available to the app

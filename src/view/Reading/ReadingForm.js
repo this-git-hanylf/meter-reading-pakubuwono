@@ -44,8 +44,8 @@ class ReadingForm extends Component {
             dataPict: [],
             isloading: false,
             loadingText: "Loading...",
-            isAvailable : true,
-            loadPage : false
+            isAvailable: true,
+            loadPage: false
         };
         this.saveImage = this.saveImage.bind(this);
         this.removeImage = this.removeImage.bind(this);
@@ -63,7 +63,12 @@ class ReadingForm extends Component {
 
     getData = async data => {
         const saveDataAsync = await AsyncStorage.getItem("@SaveDataMeter");
-        const keySaveData = { a: "meterId", b: data, c: "meterType", d: "project" };
+        const keySaveData = {
+            a: "meterId",
+            b: data,
+            c: "meterType",
+            d: "project"
+        };
         const cek = this.cekStore(saveDataAsync, keySaveData);
         console.log("cek", cek);
         if (cek.length !== 0) {
@@ -77,14 +82,19 @@ class ReadingForm extends Component {
                 meteran: cek[0].meteran,
                 dataMeter: cek[0].dataMeter,
                 dataPict: cek[0].dataPict,
-                loadPage : true
+                loadPage: true
             };
             this.setState(dataParse, () => {
                 console.log("this.state", this.state);
             });
         } else {
             const dataAsync = await AsyncStorage.getItem("@DataMeter");
-            const keyData = { a: "meter_id", b: data, c: "meter_type", d: "project_no" };
+            const keyData = {
+                a: "meter_id",
+                b: data,
+                c: "meter_type",
+                d: "project_no"
+            };
             const cek2 = this.cekStore(dataAsync, keyData);
             console.log("cek2", cek2);
             if (cek2.length !== 0) {
@@ -95,7 +105,7 @@ class ReadingForm extends Component {
                     lotNo: x.lot_no,
                     lastRead: x.last_read,
                     meterType: x.meter_type,
-                    loadPage : true,
+                    loadPage: true,
                     dataMeter: {
                         ...x
                     }
@@ -106,20 +116,22 @@ class ReadingForm extends Component {
                 }
             } else {
                 // Alert.show("No Data Available", "pop");
-                this.setState({isAvailable : false,loadPage: true})
+                this.setState({ isAvailable: false, loadPage: true });
             }
         }
     };
 
     cekStore = (data, key) => {
         const dataJson = JSON.parse(data);
+        console.log("key.b", dataJson.filter(item => item.meter_id == key.b));
+
         let result = "";
         if (dataJson) {
             result = dataJson.filter(item => {
                 return (
                     item[key.a] == key.b &&
                     item[key.c] == this.props.selMeterType.type &&
-                    item[key.d] == this.props.selTower.project_no.trim()
+                    item[key.d].trim() == this.props.selTower.project_no.trim()
                 );
             });
         }
@@ -140,7 +152,7 @@ class ReadingForm extends Component {
             meterType: x.meterType,
             meteran: x.meteran,
             dataMeter: x.dataMeter,
-            readingDate: new Date(),
+            readingDate: x.readingDate,
             dataPict: x.dataPict
         };
         console.log(
@@ -179,14 +191,9 @@ class ReadingForm extends Component {
     };
 
     saveImage(data) {
-        this.setState(
-            state => ({
-                dataPict: [...state.dataPict, data]
-            }),
-            () => {
-                console.log("SaveImage", this.state.dataPict);
-            }
-        );
+        this.setState(state => ({
+            dataPict: [...state.dataPict, data]
+        }));
     }
 
     removeImage(data) {
@@ -212,17 +219,27 @@ class ReadingForm extends Component {
             G: "gas"
         };
 
-        return (
-            !this.state.isAvailable ? 
-            <View style={[styles.container,{alignItems :'center',justifyContent : 'center',flex :1}]}>
-                <Text style={[Style.textBlack, {fontSize : 25}]}>Data Kosong</Text>
+        return !this.state.isAvailable ? (
+            <View
+                style={[
+                    styles.container,
+                    { alignItems: "center", justifyContent: "center", flex: 1 }
+                ]}
+            >
+                <Text style={[Style.textBlack, { fontSize: 25 }]}>
+                    Data Kosong
+                </Text>
             </View>
-            :
-            !this.state.loadPage ?
-            <View style={[styles.container,{alignItems :'center',justifyContent : 'center',flex :1}]}>
+        ) : !this.state.loadPage ? (
+            <View
+                style={[
+                    styles.container,
+                    { alignItems: "center", justifyContent: "center", flex: 1 }
+                ]}
+            >
                 <ActivityIndicator size={50} />
             </View>
-            :
+        ) : (
             <ScrollView>
                 <View style={styles.container}>
                     <Text style={[Style.textBlack, styles.text]}>

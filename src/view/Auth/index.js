@@ -5,7 +5,7 @@ import { Actions } from "react-native-router-flux";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DeviceInfo from 'react-native-device-info';
-
+import TextInputs from "../components/InputText/TextInput";
 class Login extends Component {
 
     constructor(props){
@@ -64,7 +64,12 @@ class Login extends Component {
                         Actions.resetPass({email : res.Data.user});
                     });
                 } else {
-                    this.signIn(res);
+                    if(res.Data.AllowMeterApp == "Y"){
+                        this.signIn(res);
+                    } else {
+                        alert("Your user doesn't allow to using this app, please tell your administrator to help your problem");
+                        this.setState({isLoaded: !this.state.isLoaded});
+                    }
                 }
                 console.log('res',res);
             } else {
@@ -96,6 +101,7 @@ class Login extends Component {
             this._storeData("@Debtor",res.Data.Debtor_acct?res.Data.Debtor_acct:'');
             this._storeData('@rowID', res.Data.rowID.toString());
             this._storeData('@RefreshProfile', "false");
+            this._storeData('@SaveDataMeter', "[]");
 
             this.setState({isLoaded : true},()=>{
                 Actions.home()
@@ -145,25 +151,34 @@ class Login extends Component {
             // </View>
 
             <View style={styles.container}>
-                <StatusBar />
                 <View style={styles.loginFormWrap} pointerEvents={this.state.isLoaded ? "auto" : "none"}>
                         <Image
                         style={styles.stretch}
                         source={require('@Assets/images/login/head-login.png')}/>
                          <Text style={styles.textlogin}>Login</Text>
                         <View style={styles.textInputWrap}>
-                           
-                           
-                           
-                            <TextInput style={styles.input} placeholder="Username" value={this.state.txtUsername} onChangeText={(val)=>this.setState({txtUsername : val})} />
-                            <View style={{backgroundColor:'#D7D7D7',height:1,width:'80%' }}></View>
 
-                            <View style={{flexDirection:'row',alignItems: 'center',}}>
-                                <TextInput ref="password" style={styles.input} placeholder="Password" value={this.state.txtPassword} onChangeText={(val)=>this.setState({txtPassword : val})} secureTextEntry={this.state.isHidden}/>
-                                <Icon style={styles.EyePasswordBtnIcon} name={this.state.isHidden ? "eye" : "eye-off"} size={5} onPress={()=>this.handleEyeChanger()}/>
-                                
+                            <TextInputs
+                                width="70%"
+                                height="7%"
+                                value={this.state.txtUsername}
+                                placeholder="Username"
+                                containerStyle={{elevation : 2}}
+                                onChangeText={val => this.setState({ txtUsername: val })}
+                            />
+                            <View>
+                                <TextInputs
+                                    width="70%"
+                                    height="7%"
+                                    password = {true}
+                                    value={this.state.txtPassword}
+                                    placeholder="Password"
+                                    containerStyle={{elevation : 2}}
+                                    onChangeText={val => this.setState({ txtPassword: val })}
+                                />
                             </View>
-                            <View style={{backgroundColor:'#D7D7D7',height:1,width:'80%' }}></View>
+                                {/* <TextInput ref="password" style={styles.input} placeholder="Password" value={this.state.txtPassword} onChangeText={(val)=>this.setState({txtPassword : val})} secureTextEntry={this.state.isHidden}/>
+                                <Icon style={styles.EyePasswordBtnIcon} name={this.state.isHidden ? "eye" : "eye-off"} size={5} onPress={()=>this.handleEyeChanger()}/> */}
                         </View>
 
                       
@@ -259,7 +274,8 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 24,
         position: 'absolute',
-        right : -25,
+        right : 0,
+        bottom : 9,
         flexDirection: 'column'
     }
 });

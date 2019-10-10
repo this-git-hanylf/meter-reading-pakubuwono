@@ -227,6 +227,9 @@ class UploadAll extends Component {
                 
             }).catch((error) => {
                 console.log('Error =>>',error);
+                this.setState({isLoading:false},()=>{
+                    alert("Upload failed")
+                })
             });
 
         })

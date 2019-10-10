@@ -30,6 +30,8 @@ import UploadAll from './view/Upload/UploadAll';
 import TypeProject from './view/Sumarry/Type';
 import SumaryView from './view/Sumarry/SumaryView';
 
+import Setting from './view/Setting/setting';
+
 class Routes extends Component {
 
     constructor(){
@@ -64,7 +66,7 @@ class Routes extends Component {
             )
         } else {
             return (
-                <Router>
+                <Router navigationBarStyle={Style.textBlack}>
                     <Stack key='root'  headerLayoutPreset="center">
                     {/* <Scene key='launch' component={Launch} hideNavBar={true} title=""/> */}
 
@@ -87,6 +89,7 @@ class Routes extends Component {
                     <Scene key='viewSearch' component={ViewSearch} NavBar={true} titleStyle={Style.textBlack} title="View Search"/>
                     <Scene key='seeAll' component={SeeAll} hideNavBar={true} titleStyle={Style.textBlack} title=""/>
                     <Scene key='uploadAll' component={UploadAll} NavBar={true} titleStyle={Style.textBlack} title="Upload"/>
+                    <Scene key='setting' component={Setting} NavBar={true} titleStyle={Style.textBlack} title="Setting"/>
                     </Stack>
                 </Router>
 
