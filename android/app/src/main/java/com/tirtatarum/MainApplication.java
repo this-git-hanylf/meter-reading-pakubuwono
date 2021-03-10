@@ -1,4 +1,4 @@
-package com.alfalandmeter;
+package com.ifcameterreading;
 
 import android.app.Application;
 
