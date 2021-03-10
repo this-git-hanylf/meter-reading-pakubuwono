@@ -32,7 +32,7 @@ export default class MeterPhoto extends Component {
                 path: "MeterRiding"
             }
         };
-        ImagePicker.launchCamera(options, response => {
+        ImagePicker.showImagePicker(options, response => {
             if (response.uri) {
                 const size = response.fileSize / 1000;
                 if (size <= 2000) {
@@ -43,6 +43,7 @@ export default class MeterPhoto extends Component {
             }
             console.log("Response Photo", response);
         });
+        
     };
 
     requestCameraPermission = async () => {

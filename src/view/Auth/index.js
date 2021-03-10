@@ -32,7 +32,8 @@ class Login extends Component {
             token : '',
             token_firebase : "",
             device : Platform.OS,
-            mac : mac
+            mac : mac,
+            app : "M"
         }
         var lengthPass = this.state.txtPassword.length;
         if(lengthPass < 4 ){
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     stretch:{
         width: '100%',
         height: '43%',
-        alignItems: 'center',
+        alignSelf: 'center',
         justifyContent: 'center',
         marginBottom: 5,
         marginTop: 8,

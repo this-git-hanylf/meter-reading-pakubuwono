@@ -7,6 +7,8 @@ import groovy.json.JsonSlurper
  * Kedua fungsi di bawah ini berfungsi agar versi pada build sesuai dengan yang ada di package JSON.
  * ~(˘▾˘~) ~(˘▾˘~) ~(˘▾˘~)
 */
+
+
 def getVerCode() {
     def inputFile = new File("../package.json")
     def packageJson = new JsonSlurper().parseText(inputFile.text)
@@ -105,7 +107,7 @@ apply from: "../../node_modules/react-native/react.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -124,8 +126,8 @@ android {
         applicationId "com.alfalandmeter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode verCode
-        versionName verName
+        versionCode 10003
+        versionName "1.3"
     }
     signingConfigs {
         release {
@@ -135,13 +137,14 @@ android {
                 keyAlias MYAPP_RELEASE_KEY_ALIAS
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
             }
+            
         }
     }
     splits {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk true  // If true, also generate a universal APK
             include "armeabi-v7a", "x86", "arm64-v8a"
         }
     }

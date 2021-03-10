@@ -1,16 +1,6 @@
-// import DeviceInfo from 'react-native-device-info';
+// export const urlApi = "http://139.255.18.254:2121/alfaAPI/";
+// export const urlApi = "http://ifca.alfaland-group.com:2121/alfaAPI/meterreading/";
+export const urlApi = "http://34.87.121.155:2121/pakubuwonoAPI/meterreading/";
 
-
-
-// const MAIN_HTTP_URL = 'http://35.198.219.220:2121/alfaAPI/c_meter_utility/getDataMu';
-
-
-
-// module.exports = {
-//     IMEI_PHONE : DeviceInfo.getUniqueID(),
-//     QRCODE : 'qrCode',
-// }
-
-export const urlApi = "http://35.197.137.111/alfaAPI/";
 export const USER_KEY = 'USER_KEY'
 export const themeColor = '#4A98F7'
